@@ -1,0 +1,32 @@
+from Bio import SeqIO
+from itertools import zip_longest
+import gzip
+
+NEWFILE = open("NEWFILE.fastq", "w") 					# Create new fastq file
+count = 0												# Start Count at 0
+
+with gzip.open("example_fq.fastq.gz", "rt") as FASTA:	# Unzip file
+	for record in SeqIO.parse(FASTA, "fastq"):			# For each record in the fasta file
+		count = count + 1								# Add 1 to the count
+print("record count:",count)							# Print the total record count
+pairs = int(count/2)									# Calculate pairs of records
+print("pairs count", pairs)								# Print total # of pairs
+
+for i in range(1,pairs +1):								# Start at 1 -> # of pairs
+	string = str(i)										# Create a string for pair #
+	newstring = str(string).zfill(15)					# Add leading zeros 
+	newstring1 = "OP:i:1"								# String for forward read
+	newstring2 = "OP:i:2"								# String for reverse read
+	print(newstring)									# Print string
+	with gzip.open("example_fq.fastq.gz", "rt") as FASTA: # Unzip
+		fasta=SeqIO.parse(FASTA, "fastq")				# Create fasta object
+		for rec1, rec2 in zip_longest(fasta, fasta):	# Open 2 records at a time
+			rec1.id = newstring							# ID for 1st record = string 
+			rec1.description = newstring1				# Description for 1st record = fwd read string
+			rec2.id = newstring							# ID for 2nd record = string
+			rec2.description = newstring2				# Description for 2nd record = reverse read string
+		SeqIO.write(rec1, NEWFILE, "fastq")				# Write record 1
+		SeqIO.write(rec2, NEWFILE, "fastq")				# Write record 2
+		print(rec1.id)									# Print Record 1
+		print(rec2.id)									# Print Record 2
+NEWFILE.close()											# Close the new file
