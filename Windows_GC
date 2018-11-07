@@ -1,0 +1,89 @@
+from Bio import SeqIO
+import pandas as pd
+import matplotlib.pyplot as plt
+import argparse
+
+################################
+# Arguments
+################################
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--input", required=True, help = "name of fasta file")
+ap.add_argument("-o", "--output", required=True, help = "name of output plot")
+ap.add_argument("-w", "--window", required=False, nargs="?", default=10000, help = "Window size, default = 10,000bp",  type = int)
+args = vars(ap.parse_args())
+
+#########################################
+# Define GC content and Sliding Windows
+#########################################
+
+def gc_content(sequence):									# Define a function with an input of a sequence
+	gc_count = sequence.count("G") + sequence.count("C")	# Count # of G + C 
+	gc_frac = gc_count/len(sequence)						# Divide by total length of sequence
+	return 100 * gc_frac									# Answer: fraction * 100
+	print("GC Content:", gc_content(sequence)) 				# Print statement
+
+
+def sliding_window_analysis(sequence, function, window_size = args["window"]):		# Define window with an input of sequence, a function to act on the window, and windowsize
+	"""" Return an iterator that yields (start, end, property) tuples		# Help statement
+	Where start and end are the indiceds used to slice the input list and 
+	property is the return value of the function given the sliced list. """
+	for start in range (0, len(sequence), window_size):						# Define range (from 0 to the end of the sequence) and window size
+		end = start + window_size											# End of window = start + window size
+		if end > len(sequence):												# If you run out of sequence:
+			break															# Just stop the loop
+		yield start, end, function (sequence[start: end])					# yield the results; just temporarily held in memory
+
+########################
+# Get to know your data
+########################
+
+# Count the # of records and just get a feel for lengths of the records
+FASTA = open(args["input"])
+n = 0
+for line in FASTA:
+	if line.startswith(">"):
+		n += 1
+FASTA.close()
+print("count", n) 														# count = 28758
+
+for record in SeqIO.parse(args["input"], "fasta"):
+	print(record.id,len(record.seq))
+
+##########################
+# Keeping long sequences
+##########################	
+
+count = 0
+longfasta = []
+for record in SeqIO.parse(args["input"], "fasta"):
+	if len(record) >= 30000:
+		longfasta.append(record)
+		print(record.id, len(record.seq))
+		count += 1
+print("count =", count)												# count = 2881		
+SeqIO.write(longfasta, "longfasta.fasta", "fasta")
+
+############################
+# Apply the window and gc functions to the sequences
+############################
+
+window_gc = []
+windows = 0
+for seq_record in SeqIO.parse("longfasta.fasta", "fasta"):
+	sequence = seq_record.seq
+	#print(seq_record.id, gc_content(sequence))
+	for start, end, gc in sliding_window_analysis(sequence, gc_content):
+		windows += 1
+		print(start, end, gc)
+		window_gc.append(gc)
+print(window_gc[:5])
+print("window count:", windows)													# 20,766
+
+##################################
+# Plot histogram of GC content
+##################################
+plt.hist(x=window_gc, bins = "auto")
+plt.xlabel("GC Content")
+plt.ylabel("Frequency")
+plt.savefig(args["output"]) #Save the graph
+plt.show()
