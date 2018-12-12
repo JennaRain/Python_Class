@@ -2,17 +2,20 @@
 # Author: Jenna R. Grimshaw
 # Date: Nov 28th, 2018
 
-#### Not Working yet #####
-
 from Bio.Seq import Seq
 import os
 import gzip
+from Bio.Blast.Applications import NcbiblastpCommandline
+import argparse
+import subprocess 
 print("Importing modules...")
 
-from Bio.Blast.Applications import NcbiblastpCommandline
+response = subprocess.run("echo 'Does this shit work at all?' 1>%2", shell=True)
+print(response)
+print()
 
-module load intel perl python3 rm
-
+module_load = "module load intel rmblast/2.6.0"
+subprocess.run(["bash", '-c', module_load])
 ################ Gunzipping the fasta file
 #count =0
 #with gzip.open("cPer_rn.fa.gz", "rt") as FASTA: 
@@ -24,6 +27,5 @@ module load intel perl python3 rm
 #print(cline)
 #os.system(str(cline))
 
-S = "blastp -query CPer_rn.fa -db starting_library.fas -out blast_output"
-print("did this work?")
-os.system(S)
+#subprocess.check_call("blastn -query starting_library.fas -db cPer.m.fa -out myoutfile.out -outfmt 6")
+subprocess.run("bash", "blastn -query starting_library.fas -db cPer.m.fa -out myoutfile.out -outfmt 6", shell=True)
