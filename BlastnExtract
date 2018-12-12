@@ -1,0 +1,29 @@
+# Assignment 4
+# Author: Jenna R. Grimshaw
+# Date: Nov 28th, 2018
+
+#### Not Working yet #####
+
+from Bio.Seq import Seq
+import os
+import gzip
+print("Importing modules...")
+
+from Bio.Blast.Applications import NcbiblastpCommandline
+
+module load intel perl python3 rm
+
+################ Gunzipping the fasta file
+#count =0
+#with gzip.open("cPer_rn.fa.gz", "rt") as FASTA: 
+#	for record in seqIO.parse(FASTA, "fastq"):
+#		count = count +1
+
+#
+#cline = NcbiblastpCommandline(query = "starting_library.fas", db = "FASTA", out = "myoutfile.out" )
+#print(cline)
+#os.system(str(cline))
+
+S = "blastp -query CPer_rn.fa -db starting_library.fas -out blast_output"
+print("did this work?")
+os.system(S)
