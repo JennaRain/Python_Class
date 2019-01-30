@@ -1,0 +1,108 @@
+########## 2.1 ##########
+F = 0
+while F <= 100:
+	C = (F - 32)* 5.0/9
+	print(F, C)
+	F += 10
+
+########## 2.2 ##########
+F = 0
+while F <= 100:
+	C = (F - 32)* 5.0/9
+	C_hat = (F-30)/2
+	print(F, C, C_hat)
+	F += 10
+
+########## 2.3 ##########
+list = [2,3,5,7,11,13]
+for n in list: 
+	print("list elements:", n)
+print("This list has ", len(list), "prime numbers.")
+
+p = 17
+
+list.append(p)
+print(list)
+	
+########## 2.4 ##########
+
+odd = []
+x = 1
+n = 30
+
+while x <= n-1:
+	odd.append(x)
+	x += 2
+print(odd)
+
+########## 2.5 ##########
+
+x = 0
+n = 100
+	
+for i in range (0, n):
+	x = x + i
+	x += 1
+print(x)
+
+y = (n*(n + 1))/2
+print(y)
+
+########## 2.6 ##########
+
+me = 9.1094e-31
+e = 1.6022e-19
+eo = 8.8542e-12
+h = 6.6261e-34
+
+for n in range(1,20):
+	En = -(me * e**4)/(8 * eo**2 * h**2 * n**2)
+	print(n, En)
+
+•	I haven’t done in second part
+
+########## 2.7 ##########
+a = 0	# Start
+b = 100	# End
+n = 5 	# number of intervals
+
+h = (b-a)/n #length of interval
+coordinates = []
+
+i = 0
+
+while i <= n:
+	x = a + i*h
+	coordinates.append(x)
+	i = i + 1
+print(coordinates)
+
+########## 2.8 ##########
+
+Vo = 100
+g = 9.8
+start = 0
+end = int(2 * Vo/g)
+
+for t in range (start, end):
+	y = (Vo * t) - (0.5 * g * t**2)
+	print(t, y)	
+
+########## 2.9 ##########
+Vo = 100
+g = 9.8
+start = 0
+end = int(2 * Vo/g)
+T = []
+Y = []
+
+for t in range (start, end):
+	y = (Vo * t) - (0.5 * g * t**2)
+	T.append(t)
+	Y.append(y)
+	print(t, y)
+print(T)
+print(Y)
+
+for t, y in zip(T, Y):
+	print(t, y)
