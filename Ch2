@@ -224,15 +224,67 @@ True == 0		# FALSE
 True == 1		# TRUE
 
 ########## 2.19 ##########
+Start by importing the sqrt function from Math.
+Loop 1: for n that goes from 1 - 60: r = 2.0; Loop 2: for i in the range (1:n), r is the sqrt of r N TIMES; Loop 3: also r = r sequared N TIMES;
+then print (" n times sqrt and squared = r
+
+So after around n = 51 square roots or so, the rounding of the decimal drops to 1.000000000 which is then converted to 1.0; When we 
+start squaring it back up, we are just getting 1.0 squared since we lost the tiny decimals
 
 ########## 2.20 ##########
+L1: set eps = 1.0
+L2: while 1.0 is not equal to 2.0 (1.0 + eps):
+L3: 	print(--- 1.0) (eps)
+L4: 	new eps = 0.5 (eps/2.0)
+L5: print final eps
+So basically as long as eps is not equal to 0, then we stay in the while loop; 
+with each iteration we are dividing eps in half so its getting smaller and smaller each iteration
+We finally get to machine zero at 1.1102230246251565e-16 which is what the computer calls zero 
+We now exit the loop
 
 ########## 2.21 ##########
-
+a = 1/947.0*947
+b = 1
+if abs(a - b) < 1.1102230246251565e-16:
+	print("Wrong result!")
+	
 ########## 2.22 ##########
+L1: import time module
+L2: Set starting time to t0
+L3: while the time on the stop watch - t0 < 10:
+L4: print("I like while loops")
+L5: Then pause the stop watch for 2 seconds, then return to loop
+L6: Once time on stop watch - t0 => 10, then print oh no - the loop is over
+
+It printed 5 times before exiting the loop b/c 5 x 2 = 10
+
+It exited the loop immediately
 
 ########## 2.23 ##########
+Problem 1: print(C,F) is too far indented.
+Problem 2: C = C + dC is not in the loop therefore C never increases and the loop is infinite
 
 ########## 2.24 ##########
+x = 1	Works: integer
+x = 1.	Works: float
+x = 1;	Works: integer
+x = 1!	NOT WORK: invalid syntax 
+x = 1?	NOT WORK: invalid syntax 
+x = 1:	NOT WORK: invalid syntax
+x = 1,	Works: First place in a coordinate or something
 
 ########## 2.25 ##########
+L1: number [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+L2: print numbers
+L3: for each number:
+L4:	i = 5 (length of numbers)
+L5: 	delete 5th (ith) element in numbers
+L6: 	print n, which number was deleted and the new list
+
+1st: n = 0; i = 5; delete 5th element which "5"[0, 1, 2, 3, 4, 6, 7, 8, 9]
+2nd: n = 1; i = 9/2 = 4.5; delete 4th element "4" [0, 1, 2, 3, 6, 7, 8, 9]
+3rd: n = 2; i = 8/2 = 4; delete 4th element "6" [0, 1, 2, 3, 7, 8, 9]
+4th: n = 3; i = 7/2 = 3.5; delete 3rd element "3" [0, 1, 2, 7, 8, 9]
+5th: n = 8; i = 6/2 = 3; delete 3rd element "7" [0, 1, 2, 8, 9]
+
+So b/c we are editing our original list, it is affecting the loop and how long it goes for.
