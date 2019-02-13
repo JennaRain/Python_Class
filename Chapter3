@@ -1,0 +1,81 @@
+# 1. Create a random sequence file 60k bp.
+# 2. Count number of "CG" dinucleotides
+# 3. Count number of "ACGTC" pentanucleotides in that file
+ 
+import random
+import operator
+ 
+# Generate Random DNA sequence
+def generate_sequence(N, alphabet="ACTG"):
+    return " ".join([random.choice(alphabet)for i in range(N)])
+ 
+# First try at counting (v2)
+def count(dna, xtides):
+    i = 0
+    for n in dna:
+        if n == base:
+            i += 1
+    return i
+base="G"   
+sequence = generate_sequence(20)
+print(sequence)
+mysum = count(sequence, base)
+print(mysum)
+ 
+# Trying windows
+def sliding_window_analysis(sequence, function, window_size = 2, step_size=1):      # Define window with an input of sequence, a function to act on the window, and windowsize
+    """" Return an iterator that yields (start, end, property) tuples       # Help statement
+    Where start and end are the indiceds used to slice the input list and 
+    property is the return value of the function given the sliced list. """
+    for start in range (0, len(sequence), step_size):                       # Define range (from 0 to the end of the sequence) and window size
+        end = start + window_size                                           # End of window = start + window size
+        if end > len(sequence):                                              # If you run out of sequence:
+            break                                                           # Just stop the loop
+    yield start, end, function                  # yield the results; just temporarily held in memory
+ 
+base="GG"  
+sequence = generate_sequence(20)
+print(sequence)
+ 
+for start, end, counting in sliding_window_analysis(sequence, count(sequence, base)):
+    print(count(sequence, base))    
+ 
+print("cheating",sequence.count("GG"))
+ 
+# v10
+def countv10(dna, xtides):
+    return sum(n == base for n in dna)
+ 
+base="GG"
+sequence=generate_sequence(20)
+print(sequence)
+print(countv10(sequence, base))
+ 
+# New tactic
+# If the window matches the dinucleotide
+def count_win(window, xtides):
+    i = 0
+    if window is xtides:
+        i+=1
+    return i
+ 
+xtides="AG"
+#print(count_win(window, xtides)) #This works
+ 
+# Now I need to do this for each window
+print(sequence)
+for start, end, win in sliding_window_analysis(sequence, count_win(sequence, xtides)):
+    print(win, xtides, count_win(win, xtides))
+     
+def window(sequence, n=2):
+    "Returns a sliding window (of width n) over data from the iterable"
+    "   s -> (s0,s1,...s[n-1]), (s1,s2,...,sn), ...                   "
+    it = iter(sequence)
+    result = tuple(islice(it, n))
+    if len(result) == n:
+        yield result    
+    for elem in it:
+        result = result[1:] + (elem,)
+        yield result
+for result in window(sequence, n=2):
+    print(result)
