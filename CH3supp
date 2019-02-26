@@ -1,0 +1,140 @@
+#1. 
+print("#####1")
+mylist = ["Copia", "hAt", "Gypsy", "Merlin", "L1", "PiggyBac", "RTE", "Mariner", "Jockey", "P"]
+print(list)
+
+#2.  
+print("#####2")
+cI = mylist[0:10:2]
+print(cI)
+
+#3. 
+print("#####3")
+cII = mylist[1:10:2]
+print(cII)
+
+#4. 
+print("#####4")
+table = [[I, II] for I, II in zip(cI, cII)]
+for cI, cII in table:
+	print("%8s %8s" % (cI, cII))
+
+#5. 
+print("#####5")
+list2=["CLASS I", "CLASS II"]
+newlist= list2 + mylist
+print(newlist)
+cI = newlist[0:12:2]
+cII = newlist[1:12:2]
+table = [[I, II] for I, II in zip(cI, cII)]
+for cI, cII in table:
+	print("%8s %8s" % (cI, cII))
+
+#6. 
+print("#####6")
+mylist.append("Helitron")
+print(len(mylist))
+
+#7. 
+print("#####7")
+print(sorted(mylist, key=str.lower))
+
+#8. 
+print("#####8")
+def writeshort(txt):
+	result = []
+	for word in txt:
+		if len(word) < 6:
+			result.append(word)
+		continue
+	return(result)
+
+print(writeshort(mylist))
+
+#9
+print("#####9")
+def midlength(txt):
+	result = []
+	for word in txt:
+		if len(word) >3 and len(word)<6:
+			result.append(word)
+		continue
+	return(result)
+	
+print(midlength(mylist))
+
+#10. 
+print("#####10")
+count = 0
+for word in mylist:
+	if word[0] == "M":
+		count += 1
+print(count)
+
+#11
+print("#####11")
+A = [x for x in range(1,9)]
+print(A)
+
+#12
+print("#####12")
+print("Minimum value:", min(A))
+print("Maximum value:", max(A))
+
+#13
+print("#####13")
+print("Sum:", sum(A))
+
+#14
+print("#####14")
+odd = [num for num in A if num % 2 == 1]
+print(odd)
+
+#15
+print("#####15")
+even = [num for num in A if num % 2 == 0]
+print(even)
+
+#16
+print("#####16")
+def AVERAGE(list):
+	return sum(list)/len(list)
+avg = AVERAGE(A)
+print(avg)
+
+#17
+print("#####17")
+multodd = []
+for num in A:
+	if num % 2 == 1:
+		num = num * 2
+		multodd.append(num)
+	else:
+		multodd.append(num)
+print(multodd)
+
+#18
+print("#####18")
+B = list(dict.fromkeys(multodd))
+print(B)
+
+#19
+print("#####19")
+def common(list1, list2):
+	result = False
+	for x in list1:
+		for y in list2:
+			if x == y:
+				result = True
+				return result
+	return result
+print(common(A,B))
+
+#20
+print("#####20")
+def half(list):
+	C = []
+	for x in list:
+		C.append(int(x/2))
+	return C
+print(half(B))
