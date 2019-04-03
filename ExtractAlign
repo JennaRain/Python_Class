@@ -1,0 +1,22 @@
+from BIO import SeqIO
+from BIO.Seq import Seq
+from Bio.Alphabet import IUPAC
+import argparse
+import pandas as pd
+
+# To Do
+# 1. Set arguments
+# 2. Reverse complement
+ 
+# Setting up arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-g", "--GENOME", required=True, help="Add your genome file")
+ap.add_argument("-b", "--BLAST", required=True, help="Add your blast file")
+ap.add_argument("-t", "--TE", required=True, help="Add your TE file")
+ap.add_argument("-n", "--NUMBER", required=True, help="Add your sequence number")
+ap.add_argument("-a", "--ALIGN", required=True, help="Add your align file")
+args = vars(ap.parse_args())
+
+
+# Reverse Transcribe
+sequence = sequence.reverse_complement()
