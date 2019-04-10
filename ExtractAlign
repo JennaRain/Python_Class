@@ -20,3 +20,11 @@ args = vars(ap.parse_args())
 
 # Reverse Transcribe
 sequence = sequence.reverse_complement()
+
+# Create TE output files
+for record in SeqIO.parse(args["TE_LIBRARY"], "fasta"):
+	RECORD = record.id
+	SEQ = record.seq	# Calling the sequence a variable "SEQUENCE"
+	SEQ.RECORD = SeqRecord(SEQ)
+	SEQ.RECORD.id = "CONSENSUS-"+RECORD
+	SeqIO.write(SEQ.RECORD, RECORD+".fa", "fasta")
