@@ -20,11 +20,73 @@ args = vars(ap.parse_args())
 
 # Reverse Transcribe
 sequence = sequence.reverse_complement()
+###########################################
+def createTEoutputs(LIBRARY):
+	for record in SeqIO.parse(LIBRARY, "fasta"):
+		RECORD = record.id
+		RECORD = RECORD.replace("#", "__").replace("/", "___")
+		SEQ = record.seq	# Calling the sequence a variable "SEQUENCE"
+		SEQ.RECORD = SeqRecord(SEQ)
+		SEQ.RECORD.id = "CONSENSUS-"+RECORD
+		SeqIO.write(SEQ.RECORD, RECORD+".fa", "fasta")
+################################################		
+createTEoutputs(args["TE_LIBRARY"])
 
-# Create TE output files
-for record in SeqIO.parse(args["TE_LIBRARY"], "fasta"):
-	RECORD = record.id
-	SEQ = record.seq	# Calling the sequence a variable "SEQUENCE"
-	SEQ.RECORD = SeqRecord(SEQ)
-	SEQ.RECORD.id = "CONSENSUS-"+RECORD
-	SeqIO.write(SEQ.RECORD, RECORD+".fa", "fasta")
+#############################################
+
+fields = ["Query", "SeqID", "PerMatch", "Length", "Mismatch", "GapOpen", "QStart", "QStop", "Start", "End", "Evalue", "BitScore"]
+BB = pd.read_csv(args["BLAST"], sep="\t", names=fields)
+print(BB[:10])
+
+##################################
+##################################
+#####        FUNCTIONS       #####
+##################################
+##################################
+
+def orient(row):
+	if row["Start"] < row["End"]:
+		return 1
+	else:
+		return -1
+
+def switch(row):
+	if row["StrOrient"] == -1: 
+		END = row["Start"]
+		row["Start"] = row["End"]
+		row["End"] = END
+	return row
+
+def extract_start(row):
+	if row["Start"] < args["BUFFER"]:
+		return 0
+	else:
+		return row["Start"] - args["BUFFER"]
+	return row
+###################################		
+###################################		
+###################################			
+print("String orientation...")
+BB["StrOrient"]= BB.apply(orient, axis=1)
+print(BB.head(10))
+
+print("Switching Start and End")
+BB = (BB.apply(switch, axis=1))
+print(BB.head(10))
+
+print("Extracting Start")
+BB["Extract_Start"] = BB.apply(extract_start, axis = 1)
+print(BB.head(10))
+
+print("Extract Length")
+BB["Extract_Length"] = (BB["End"]+ args["BUFFER"] - BB["Extract_Start"])
+print(BB.head(10))
+
+print("Creating processed blast file")
+BLAST = BB[["Query", "SeqID", "Extract_Start", "Extract_Length", "StrOrient", "Evalue","BitScore"]]
+print(PROCESSED_BLAST.head(10))
+# Add counter here
+
+print("Sorting blast file")
+BLAST_SORT = BLAST.sort_values(["Evalue", "BitScore"], ascending=[False, False])
+print(BLAST_SORT.head(20))
