@@ -1,5 +1,6 @@
-from BIO import SeqIO
-from BIO.Seq import Seq
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 from Bio.Alphabet import IUPAC
 import argparse
 import pandas as pd
@@ -10,17 +11,21 @@ import pandas as pd
  
 # Setting up arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-g", "--GENOME", required=True, help="Add your genome file")
+#ap.add_argument("-g", "--GENOME", required=True, help="Add your genome file")
 ap.add_argument("-b", "--BLAST", required=True, help="Add your blast file")
-ap.add_argument("-t", "--TE", required=True, help="Add your TE file")
-ap.add_argument("-n", "--NUMBER", required=True, help="Add your sequence number")
-ap.add_argument("-a", "--ALIGN", required=True, help="Add your align file")
+ap.add_argument("-f", "--BUFFER", required=True, type=int,help = "Add your chosen buffer length")
+ap.add_argument("-t", "--TE_LIBRARY", required=True, help="Add your TE library consensus sequences to be extracted")
+#ap.add_argument("-n", "--NUMBER", required=True, help="Add your sequence number")
+#ap.add_argument("-a", "--ALIGN", required=True, help="Add your align file")
 args = vars(ap.parse_args())
 
 
 # Reverse Transcribe
-sequence = sequence.reverse_complement()
-###########################################
+#sequence = sequence.reverse_complement()
+
+############## FUNCTIONS #################
+
+# Create TE output files
 def createTEoutputs(LIBRARY):
 	for record in SeqIO.parse(LIBRARY, "fasta"):
 		RECORD = record.id
@@ -29,20 +34,6 @@ def createTEoutputs(LIBRARY):
 		SEQ.RECORD = SeqRecord(SEQ)
 		SEQ.RECORD.id = "CONSENSUS-"+RECORD
 		SeqIO.write(SEQ.RECORD, RECORD+".fa", "fasta")
-################################################		
-createTEoutputs(args["TE_LIBRARY"])
-
-#############################################
-
-fields = ["Query", "SeqID", "PerMatch", "Length", "Mismatch", "GapOpen", "QStart", "QStop", "Start", "End", "Evalue", "BitScore"]
-BB = pd.read_csv(args["BLAST"], sep="\t", names=fields)
-print(BB[:10])
-
-##################################
-##################################
-#####        FUNCTIONS       #####
-##################################
-##################################
 
 def orient(row):
 	if row["Start"] < row["End"]:
@@ -63,30 +54,31 @@ def extract_start(row):
 	else:
 		return row["Start"] - args["BUFFER"]
 	return row
-###################################		
-###################################		
-###################################			
-print("String orientation...")
-BB["StrOrient"]= BB.apply(orient, axis=1)
-print(BB.head(10))
+	
+def organizeblasthits(BLAST, BUFFER):
+	fields = ["Query", "SeqID", "PerMatch", "Length", "Mismatch", "GapOpen", "QStart", "QStop", "Start", "End", "Evalue", "BitScore"]
+	BB = pd.read_csv(args["BLAST"], sep="\t", names=fields)
+	print("String orientation...")
+	BB["StrOrient"]= BB.apply(orient, axis=1)
+	print("Switching Start and End")
+	BB = (BB.apply(switch, axis=1))
+	print("Extracting Start")
+	BB["Extract_Start"] = BB.apply(extract_start, axis = 1)
+	print("Extract Length")
+	BB["Extract_Length"] = (BB["End"]+ args["BUFFER"] - BB["Extract_Start"])
+	print("Creating processed blast file")
+	BLAST = BB[["Query", "SeqID", "Extract_Start", "Extract_Length", "StrOrient", "Evalue","BitScore"]]
+	QUERYLIST = BLAST["Query"].unique()
+	for query in QUERYLIST:
+		QUERYFILE = BLAST[BLAST['Query'] == query]
+		QUERYFILE = QUERYFILE.sort_values(["Evalue", "BitScore"], ascending=[True, False])
+		QUERYFILE = QUERYFILE.head(10)
+		QUERYFILE.to_csv("bedfiles/" +query + ".bed",sep='\t', header=True, index=True)
+		print("The query is:", query, "Length of file is:", len(QUERYFILE))
 
-print("Switching Start and End")
-BB = (BB.apply(switch, axis=1))
-print(BB.head(10))
+##############################################
 
-print("Extracting Start")
-BB["Extract_Start"] = BB.apply(extract_start, axis = 1)
-print(BB.head(10))
 
-print("Extract Length")
-BB["Extract_Length"] = (BB["End"]+ args["BUFFER"] - BB["Extract_Start"])
-print(BB.head(10))
-
-print("Creating processed blast file")
-BLAST = BB[["Query", "SeqID", "Extract_Start", "Extract_Length", "StrOrient", "Evalue","BitScore"]]
-print(PROCESSED_BLAST.head(10))
-# Add counter here
-
-print("Sorting blast file")
-BLAST_SORT = BLAST.sort_values(["Evalue", "BitScore"], ascending=[False, False])
-print(BLAST_SORT.head(20))
+		
+createTEoutputs(args["TE_LIBRARY"])
+organizeblasthits(args["BLAST"], args["BUFFER"])
