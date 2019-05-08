@@ -1,0 +1,45 @@
+
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from Bio.Alphabet import IUPAC
+import argparse
+import pandas as pd
+import os
+
+
+# To Do
+# 1. Set arguments
+# 2. Reverse complement
+ 
+# Setting up arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-g", "--GENOME", required=True, help="Add your genome file")
+ap.add_argument("-b", "--BLAST", required=True, help="Add your blast file")
+ap.add_argument("-f", "--BUFFER", required=True, type=int,help = "Add your chosen buffer length")
+ap.add_argument("-t", "--TE_LIBRARY", required=True, help="Add your TE library consensus sequences to be extracted")
+ap.add_argument("-n", "--NUMBER", required=True, type = int, help="Add the number of sequences you want to extract")
+#ap.add_argument("-a", "--ALIGN", required=True, help="Add your align file")
+args = vars(ap.parse_args())
+
+
+
+file=pd.read_table("pDis_rnd-5_family-2483__LTR___ERV1_cons.bed", sep="\t" )
+#print(file.head(4))
+
+def getsequence(row):
+	if row["StrOrient"] == 1:
+		return("Forward")
+	elif row["StrOrient"] == -1:
+		return("Reverse")
+
+print(file.apply(getsequence, axis=1))
+
+for row in file:
+	for RECORD in SeqIO.parse(args["GENOME"], "fasta"):
+		if ["Scaffold"] == RECORD.id:
+			print("YES")
+
+
+for RECORD in SeqIO.parse(args["GENOME"], "fasta"):
+ 
